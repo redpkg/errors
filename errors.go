@@ -1,18 +1,22 @@
 package errors
 
+import "net/http"
+
 // New .
 func New(code int, message string) *Error {
 	return &Error{
-		Code:    code,
-		Message: message,
+		StatusCode: http.StatusInternalServerError,
+		Code:       code,
+		Message:    message,
 	}
 }
 
 // Error .
 type Error struct {
-	Code     int    `json:"code"`
-	Message  string `json:"message"`
-	Internal error  `json:"-"`
+	StatusCode int    `json:"-"`
+	Code       int    `json:"code"`
+	Message    string `json:"message"`
+	Internal   error  `json:"-"`
 }
 
 // Error .
@@ -23,6 +27,12 @@ func (e *Error) Error() string {
 // Unwrap .
 func (e *Error) Unwrap() error {
 	return e.Internal
+}
+
+// SetStatusCode .
+func (e *Error) SetStatusCode(code int) *Error {
+	e.StatusCode = code
+	return e
 }
 
 // SetInternal .
